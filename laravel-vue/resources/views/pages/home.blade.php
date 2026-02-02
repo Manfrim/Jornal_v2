@@ -3,7 +3,14 @@
 @section('title', 'Home')
 
 @section('content')
-    <h2 class="text-2xl font-bold mb-4">Últimas notícias</h2>
+<section class="hero-photo">
+  <img src="img/capa_manfrim3.png" alt="Autor do jornal" />
 
-    <p>Conteúdo dinâmico vindo do Laravel</p>
+  <div class="hero-overlay">
+    <h1>Prof Manfrim</h1>
+    <p>Um jornal escrito por uma só voz</p>
+  </div>
+</section>
+
+
 @endsection
