@@ -29,8 +29,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 
 //Login escritores
-Route::get('/login', fn() => view('admin.login'))->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::get('/login/escritor', fn() => view('admin.writers.login_escritor'))->name('login.escritores');
+Route::post('/login/escritor', [Writers::class, 'login'])->name('login.post.escritorio');
 
 // pagina de admin dos escritores
 Route::middleware(['auth', 'is.writer'])->group(function () {
