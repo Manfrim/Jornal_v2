@@ -35,5 +35,7 @@ Route::post('/login/escritor', [Writers::class, 'login'])->name('login.post.escr
 // pagina de admin dos escritores
 Route::middleware(['auth', 'is.writer'])->group(function () {
     Route::get('/painel', [Writers::class, 'dashboard'])->name('panel.writers');
+
+    Route::get('/painel/artigos', [Writers::class, 'articles'])->name('panel.articles');
     // ... outras rotas
 });

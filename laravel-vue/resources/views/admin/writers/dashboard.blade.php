@@ -18,7 +18,7 @@
                 <a href="{{route('panel.writers')}}" class="flex items-center py-3 px-6 bg-blue-600 text-white">
                     <i class="fas fa-home mr-3"></i> Dashboard
                 </a>
-                <a href="#" class="flex items-center py-3 px-6 text-gray-400 hover:bg-slate-800 hover:text-white transition">
+                <a href="{{route('panel.articles')}}" class="flex items-center py-3 px-6 text-gray-400 hover:bg-slate-800 hover:text-white transition">
                     <i class="fas fa-file-alt mr-3"></i> Meus Artigos
                 </a>
                 <a href="#" class="flex items-center py-3 px-6 text-gray-400 hover:bg-slate-800 hover:text-white transition">

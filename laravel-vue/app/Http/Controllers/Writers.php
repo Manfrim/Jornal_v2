@@ -40,5 +40,14 @@ class Writers extends Controller
             'escritor' => $escritor
         ]);
     }
+    public function articles(){
+            // Pegamos o escritor logado
+        $escritor = Auth::guard('escritor')->user();
+
+        // Carregamos as matérias relacionadas a ele usando o hasMany que criamos no Model
+        $materias = $escritor->materias()->latest()->get();
+
+        return view('admin.writers.dashboard_Artigos', compact('escritor', 'materias'));
+    }
 }
 
