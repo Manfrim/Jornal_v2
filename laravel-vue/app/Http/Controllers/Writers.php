@@ -49,5 +49,23 @@ class Writers extends Controller
 
         return view('admin.writers.dashboard_Artigos', compact('escritor', 'materias'));
     }
+    public function uploadImageEditor(Request $request)
+        {
+            // O middleware já barrou quem não é escritor, 
+            // mas aqui você garante que o arquivo é realmente uma imagem
+            $request->validate([
+                'file' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // Máximo 5MB
+            ]);
+
+            if ($request->hasFile('file')) {
+                $path = $request->file('file')->store('uploads/editor', 'public');
+                
+                return response()->json([
+                    'location' => asset('storage/' . $path)
+                ]);
+            }
+
+            return response()->json(['error' => 'Upload falhou'], 400);
+        }
 }
 
