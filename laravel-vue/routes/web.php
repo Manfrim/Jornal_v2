@@ -5,13 +5,18 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminWriterController;
 use App\Http\Controllers\Writers;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PublicController;
 
 
 // Auth padrão do Laravel
 Auth::routes();
 
 // Home
-Route::get('/', fn() => view('pages.home'));
+Route::get('/', [PublicController::class, 'index'])->name('home');
+
+//APIs
+Route::get('/api/materias/recentes', [PublicController::class, 'getRecentes']);
+Route::get('/api/materias/populares', [PublicController::class, 'getPopulares']);
 
 // Login admin master
 Route::get('/login', fn() => view('admin.login'))->name('login');
@@ -40,9 +45,18 @@ Route::middleware(['auth:escritor', 'is.writer'])->group(function () {
     // Listagem de artigos
     Route::get('/painel/artigos', [Writers::class, 'articles'])->name('panel.articles');
     
-    // ROTA QUE ESTAVA FALTANDO (Para salvar o artigo do Modal)
+    // Salvar o artigo do Modal
     Route::post('/painel/artigos/store', [Writers::class, 'store'])->name('panel.articles.store');
     
     // Rota de upload de imagem dentro do editor
     Route::post('/painel/upload-imagem', [Writers::class, 'uploadImageEditor'])->name('panel.image.upload');
+
+    // NOVA ROTA DE EXCLUSÃO (Adicionada aqui)
+    Route::delete('/painel/artigos/{id}', [Writers::class, 'destroy'])->name('panel.articles.destroy');
+
+    Route::put('/painel/artigos/update/{id}', [Writers::class, 'update'])->name('panel.articles.update');
+
+    Route::get('/painel/perfil', [Writers::class, 'editProfile'])->name('panel.perfil');
+
+    Route::put('/painel/perfil/update', [Writers::class, 'updateProfile'])->name('panel.profile.update');
 });
