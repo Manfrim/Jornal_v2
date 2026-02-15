@@ -27,9 +27,9 @@
 
             <div class="hidden lg:flex items-center space-x-8 font-bold text-[11px] uppercase tracking-widest text-slate-600">
                 <a href="/" class="hover:text-blue-600 transition-colors py-2 border-b-2 border-transparent hover:border-blue-600">Home</a>
-                <a href="#" class="hover:text-blue-600 transition-colors py-2 border-b-2 border-transparent hover:border-blue-600">Artigos</a>
-                <a href="#" class="hover:text-blue-600 transition-colors py-2 border-b-2 border-transparent hover:border-blue-600">Currículo</a>
-                <a href="#" class="hover:text-blue-600 transition-colors py-2 border-b-2 border-transparent hover:border-blue-600">Portfólio</a>
+                <a href="{{ route('materias.index') }}" class="hover:text-blue-600 transition-colors py-2 border-b-2 border-transparent hover:border-blue-600">Artigos</a>
+                <a href="{{ route('curriculo') }}" class="hover:text-blue-600 transition-colors py-2 border-b-2 border-transparent hover:border-blue-600">Currículo</a>
+                <a href="{{ route('portfolio') }}" class="hover:text-blue-600 transition-colors py-2 border-b-2 border-transparent hover:border-blue-600">Portfólio</a>
             </div>
 
             <div class="hidden lg:flex items-center bg-slate-100 rounded-full px-4 py-1.5 border border-transparent focus-within:border-blue-300 focus-within:bg-white transition-all">
@@ -42,14 +42,10 @@
 
         <div id="mobile-menu" class="hidden lg:hidden pb-6 pt-2 space-y-4 font-bold text-xs uppercase tracking-widest border-t border-slate-50">
             <a href="/" class="block text-slate-600 hover:text-blue-600 py-2">Home</a>
-            <a href="#" class="block text-slate-600 hover:text-blue-600 py-2">Artigos</a>
-            <a href="#" class="block text-slate-600 hover:text-blue-600 py-2">Currículo</a>
-            <a href="#" class="block text-slate-600 hover:text-blue-600 py-2">Portfólio</a>
+            <a href="{{ route('materias.index') }}" class="block text-slate-600 hover:text-blue-600 py-2">Artigos</a>
+            <a href="{{ route('curriculo') }}" class="block text-slate-600 hover:text-blue-600 py-2">Currículo</a>
+            <a href="{{ route('portfolio') }}" class="block text-slate-600 hover:text-blue-600 py-2">Portfólio</a>
             
-            <form class="flex gap-2 pt-4">
-                <input type="search" placeholder="Pesquisar" class="w-full bg-slate-100 border-none rounded-full px-4 py-2 text-xs">
-                <button class="bg-slate-900 text-white px-4 py-2 rounded-full text-[10px]">OK</button>
-            </form>
         </div>
     </div>
 </nav>

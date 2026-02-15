@@ -22,6 +22,9 @@
                 <a href="{{ route('panel.articles') }}" class="flex items-center py-3 px-6 bg-blue-600 text-white">
                     <i class="fas fa-file-alt mr-3"></i> Meus Artigos
                 </a>
+                <a href="{{route('panel.perfil')}}" class="flex items-center py-3 px-6 text-gray-400 hover:bg-slate-800 hover:text-white transition">
+                    <i class="fas fa-user mr-3"></i> Perfil
+                </a>
             </nav>
         </aside>
 
@@ -59,10 +62,13 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @forelse($materias as $materia)
-                                <tr class="hover:bg-gray-50 transition">
+                                {{-- Adicionamos a classe 'article-row' e o data-status para o filtro funcionar --}}
+                                <tr class="hover:bg-gray-50 transition article-row" data-status="{{ $materia->status }}">
                                     <td class="px-6 py-4 font-medium text-gray-800">{{ $materia->titulo }}</td>
                                     <td class="px-6 py-4">
-                                        <span class="text-xs bg-gray-200 px-2 py-1 rounded uppercase">{{ $materia->categoria ?? 'Geral' }}</span>
+                                        <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-1 rounded font-bold uppercase tracking-wider">
+                                            {{ $materia->categoria ?? 'Geral' }}
+                                        </span>
                                     </td>
                                     <td class="px-6 py-4">
                                         <span class="text-xs {{ $materia->status == 'publicado' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }} px-2 py-1 rounded-full font-bold">
@@ -70,19 +76,40 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-center">
-                                        <div class="flex justify-center gap-3">
-                                            <button onclick="openEditModal({{ $materia->toJson() }})" class="text-blue-500 hover:text-blue-700">
-                                                <i class="fas fa-edit"></i>
+                                        <div class="flex justify-center gap-4">
+                                            {{-- 1. Botão de Preview (Olhinho) --}}
+                                            <a href="{{ route('panel.articles.preview', $materia->id) }}" 
+                                            target="_blank" 
+                                            class="text-gray-400 hover:text-blue-600 transition-colors" 
+                                            title="Visualizar como está ficando">
+                                                <i class="fas fa-eye text-lg"></i>
+                                            </a>
+
+                                            {{-- 2. Botão Editar --}}
+                                            <button onclick="openEditModal({{ $materia->toJson() }})" 
+                                                    class="text-blue-500 hover:text-blue-700 transition-colors"
+                                                    title="Editar matéria">
+                                                <i class="fas fa-edit text-lg"></i>
                                             </button>
-                                            <form action="{{ route('panel.articles.destroy', $materia->id) }}" method="POST" onsubmit="return confirm('Excluir esta matéria?')">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+
+                                            {{-- 3. Botão Excluir --}}
+                                            <form action="{{ route('panel.articles.destroy', $materia->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta matéria?')">
+                                                @csrf 
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-400 hover:text-red-600 transition-colors" title="Excluir permanentemente">
+                                                    <i class="fas fa-trash text-lg"></i>
+                                                </button>
                                             </form>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
-                                <tr><td colspan="4" class="px-6 py-10 text-center text-gray-400">Nenhuma matéria encontrada.</td></tr>
+                                <tr>
+                                    <td colspan="4" class="px-6 py-12 text-center text-gray-400 italic">
+                                        <i class="fas fa-folder-open block text-3xl mb-3 opacity-20"></i>
+                                        Nenhuma matéria encontrada.
+                                    </td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -226,6 +253,8 @@
             }
             toggleModal('articleModal');
         }
+
+        
     </script>
 </body>
 </html>

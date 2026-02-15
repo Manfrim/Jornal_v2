@@ -16,8 +16,13 @@ class PublicController extends Controller
     // Retorna as matérias recentes em JSON
     public function getRecentes()
     {
-        // Traz as últimas matérias sem filtro de status para teste
-        $materias = Materia::latest()->take(10)->get();
+        // Filtra apenas por 'publicado'. 
+        // Dica: Se no banco estiver 'Publicado' (P maiúsculo), mude aqui também!
+        $materias = Materia::where('status', 'publicado')
+                        ->latest()
+                        ->take(10)
+                        ->get();
+
         return response()->json($materias);
     }
 

@@ -38,14 +38,26 @@ class Writers extends Controller
      */
     public function dashboard()
     {
+        // Recupera o usuário logado pelo guard 'escritor'
         $escritor = Auth::guard('escritor')->user();
 
         if (!$escritor) {
             return redirect()->route('login.escritores')->with('error', 'Acesso negado.');
         }
 
+        // 1. Contagem usando a coluna correta 'writer_id'
+        $totalArtigos = \App\Models\Materia::where('writer_id', $escritor->id)
+                            ->where('status', 'publicado')
+                            ->count();
+
+        // 2. Soma das views usando 'writer_id'
+        $totalViews = \App\Models\Materia::where('writer_id', $escritor->id)
+                            ->sum('views');
+
         return view('admin.writers.dashboard', [
-            'escritor' => $escritor
+            'escritor' => $escritor,
+            'totalArtigos' => $totalArtigos,
+            'totalViews' => $totalViews
         ]);
     }
 
@@ -252,5 +264,17 @@ class Writers extends Controller
 
         // Redireciona de volta para a rota de edição com sucesso
         return redirect()->route('panel.perfil')->with('success', 'Perfil atualizado com sucesso!');
+    }
+    public function preview($id)
+    {
+        // Busca a matéria ou falha se não existir
+        $materia = \App\Models\Materia::findOrFail($id);
+
+        // Retorna a view da página interna que você já usa no site
+        // O 'previewMode' serve para você exibir um aviso na tela se quiser
+        return view('pages.materia_preview', [
+            'materia' => $materia,
+            'previewMode' => true
+        ]);
     }
 }

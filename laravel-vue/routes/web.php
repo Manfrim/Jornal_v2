@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminWriterController;
 use App\Http\Controllers\Writers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\MateriaController;
 
 
 // Auth padrão do Laravel
@@ -37,7 +38,18 @@ Route::middleware(['auth', 'admin'])->group(function () {
 Route::get('/login/escritor', fn() => view('admin.writers.login_escritor'))->name('login.escritores');
 Route::post('/login/escritor', [Writers::class, 'login'])->name('login.post.escritorio');
 
-// Pagina de admin dos escritores
+Route::get('/materias', [MateriaController::class, 'index'])->name('materias.index');
+Route::get('/materia/{slug}', [MateriaController::class, 'show'])->name('materias.show');
+
+Route::get('/curriculo', function () {
+    return view('pages.curriculo');
+})->name('curriculo');
+Route::get('/portfolio', function () {
+    return view('pages.portfolio');
+})->name('portfolio');
+
+
+// Pagina de admin do escritores
 // Ajustei o middleware para 'auth:escritor' caso você esteja usando Guard separado
 Route::middleware(['auth:escritor', 'is.writer'])->group(function () {
     Route::get('/painel', [Writers::class, 'dashboard'])->name('panel.writers');
@@ -59,4 +71,6 @@ Route::middleware(['auth:escritor', 'is.writer'])->group(function () {
     Route::get('/painel/perfil', [Writers::class, 'editProfile'])->name('panel.perfil');
 
     Route::put('/painel/perfil/update', [Writers::class, 'updateProfile'])->name('panel.profile.update');
+
+    Route::get('/painel/artigos/preview/{id}', [Writers::class, 'preview'])->name('panel.articles.preview');
 });
