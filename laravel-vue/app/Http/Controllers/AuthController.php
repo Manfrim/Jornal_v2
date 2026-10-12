@@ -34,21 +34,24 @@ class AuthController extends Controller
             return redirect()->route('admin.dashboard'); // Admin → dashboard admin
         }
 
-        return redirect()->route('user.dashboard'); // Usuário comum → dashboard user
-
-            return redirect()->route('home');
-        }
+        // Usuário comum → home (a rota user.dashboard não existe)
+        return redirect()->route('home');
+    }
 
     /**
      * Logout
      */
     public function logout(Request $request)
     {
-        Auth::logout();
+        $wasWriter = Auth::guard('escritor')->check();
+
+        // Encerra ambos os guards (o escritor usa o guard 'escritor')
+        Auth::guard('escritor')->logout();
+        Auth::guard('web')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route($wasWriter ? 'login.escritores' : 'login');
     }
 }

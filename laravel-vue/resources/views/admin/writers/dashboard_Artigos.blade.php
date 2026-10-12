@@ -22,6 +22,9 @@
                 <a href="{{ route('panel.articles') }}" class="flex items-center py-3 px-6 bg-blue-600 text-white">
                     <i class="fas fa-file-alt mr-3"></i> Meus Artigos
                 </a>
+                <a href="{{ route('panel.companies.index') }}" class="flex items-center py-3 px-6 text-gray-400 hover:bg-slate-800 hover:text-white transition">
+                    <i class="fas fa-building mr-3"></i> Logos Empresas
+                </a>
                 <a href="{{route('panel.perfil')}}" class="flex items-center py-3 px-6 text-gray-400 hover:bg-slate-800 hover:text-white transition">
                     <i class="fas fa-user mr-3"></i> Perfil
                 </a>
@@ -40,6 +43,17 @@
             </header>
 
             <div class="p-8">
+                @if(session('success'))
+                    <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">{{ session('success') }}</div>
+                @endif
+                @if(session('error'))
+                    <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">{{ session('error') }}</div>
+                @endif
+                @if($errors->any())
+                    <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+                        <ul class="list-disc pl-5">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
+                    </div>
+                @endif
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h3 class="text-2xl font-bold text-gray-800">Minhas Matérias</h3>

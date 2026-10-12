@@ -206,7 +206,6 @@ class Writers extends Controller
             }
 
             $materia->titulo    = $request->titulo;
-            $materia->slug      = Str::slug($request->titulo) . '-' . time();
             $materia->conteudo  = $request->conteudo;
             $materia->categoria = $request->categoria;
             $materia->status    = $request->status;
@@ -268,7 +267,7 @@ class Writers extends Controller
     public function preview($id)
     {
         // Busca a matéria ou falha se não existir
-        $materia = \App\Models\Materia::findOrFail($id);
+        $materia = Materia::where('writer_id', Auth::guard('escritor')->id())->findOrFail($id);
 
         // Retorna a view da página interna que você já usa no site
         // O 'previewMode' serve para você exibir um aviso na tela se quiser

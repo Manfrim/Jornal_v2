@@ -4,15 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminWriterController;
 use App\Http\Controllers\Writers;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\CompanyController;
 
 
-
-// Auth padrão do Laravel
-Auth::routes();
 
 // Home
 Route::get('/', [PublicController::class, 'index'])->name('home');

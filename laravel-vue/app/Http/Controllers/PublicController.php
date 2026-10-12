@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Company;
 use App\Models\Materia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PublicController extends Controller
 {
@@ -26,7 +27,7 @@ class PublicController extends Controller
                         ->take(10)
                         ->get();
 
-        return response()->json($materias);
+        return response()->json($materias->map(fn ($m) => $this->resumo($m)));
     }
 
     // Retorna as populares (as mais lidas) em JSON
@@ -37,7 +38,22 @@ class PublicController extends Controller
                             ->take(5)
                             ->get();
 
-        return response()->json($populares);
+        return response()->json($populares->map(fn ($m) => $this->resumo($m)));
+    }
+
+    // Envia só um resumo em vez do conteúdo completo da matéria
+    private function resumo(Materia $m): array
+    {
+        return [
+            'id'         => $m->id,
+            'titulo'     => $m->titulo,
+            'slug'       => $m->slug,
+            'capa'       => $m->capa,
+            'categoria'  => $m->categoria,
+            'views'      => $m->views,
+            'created_at' => $m->created_at,
+            'resumo'     => Str::limit(trim(html_entity_decode(strip_tags($m->conteudo))), 140),
+        ];
     }
 
     // Retorna as logos ativas em JSON (caso vá renderizar o carrossel via JS/fetch)

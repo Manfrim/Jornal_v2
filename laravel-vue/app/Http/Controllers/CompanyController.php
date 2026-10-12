@@ -73,6 +73,12 @@ class CompanyController extends Controller
     {
         try {
             $company = Company::findOrFail($id);
+            $escritor = Auth::guard('escritor')->user();
+
+            // Só quem cadastrou a logo (ou admin/editor) pode excluir
+            if ($company->writer_id !== $escritor->id && !in_array($escritor->role, ['admin', 'editor'])) {
+                return back()->with('error', 'Você só pode excluir logos cadastradas por você.');
+            }
 
             // Exclui a imagem física do Storage se ela existir
             if ($company->logo_path && Storage::disk('public')->exists($company->logo_path)) {

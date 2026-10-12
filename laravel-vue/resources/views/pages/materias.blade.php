@@ -24,7 +24,7 @@
         @forelse($materias as $m)
             <article class="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col border border-gray-100 group">
                 <div class="overflow-hidden rounded-t-2xl h-48">
-                    <img src="{{ $m->capa ? asset('storage/' . $m->capa) : 'https://via.placeholder.com/600x400' }}" 
+                    <img src="{{ $m->capa ? asset('storage/' . $m->capa) : "data:image/svg+xml;utf8," . rawurlencode('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="100%" height="100%" fill="#e2e8f0"/></svg>') }}" 
                          alt="{{ $m->titulo }}"
                          class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                 </div>

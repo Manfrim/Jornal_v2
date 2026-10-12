@@ -4,7 +4,7 @@
 
 @section('content')
 <section class="hero-photo relative overflow-hidden group">
-  <img src="img/capa_manfrim3.png" alt="Autor do jornal" 
+  <img src="{{ asset('img/capa_manfrim3.png') }}" alt="Autor do jornal" 
        class="transition-transform duration-[10000ms] ease-out transform group-hover:scale-110" />
   
   <div class="hero-overlay flex flex-col items-center justify-center animate-fade-in-up">
@@ -165,6 +165,9 @@ function exibirComEfeito(texto, autor, executionId) {
 }
 
 // --- LÓGICA DAS MATÉRIAS ---
+const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="100%" height="100%" fill="#e2e8f0"/></svg>');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
 function carregarMaterias() {
     const container = document.getElementById('grid-recentes');
 
@@ -177,33 +180,33 @@ function carregarMaterias() {
             }
 
             container.innerHTML = data.map((m, index) => {
-                const urlMateria = `{{ url('/materia') }}/${m.slug}`;
+                const urlMateria = `{{ url('/materia') }}/${encodeURIComponent(m.slug)}`;
 
                 return `
                 <article class="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 flex flex-col opacity-0 animate-fade-in-up" 
                          style="animation-delay: ${index * 150}ms; animation-fill-mode: forwards;">
                     
                     <a href="${urlMateria}" class="overflow-hidden relative group block">
-                        <img src="${m.capa ? '/storage/' + m.capa : 'https://via.placeholder.com/600x400'}" 
+                        <img src="${m.capa ? '/storage/' + m.capa : PLACEHOLDER}" 
                              class="w-full h-60 object-cover transition-transform duration-700 group-hover:scale-110" 
-                             alt="${m.titulo}">
+                             alt="${esc(m.titulo)}">
                         <div class="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors"></div>
                     </a>
                     
                     <div class="p-8 flex-1 flex flex-col">
                         <div class="flex items-center gap-2 mb-4">
                             <span class="w-2 h-2 bg-blue-600 rounded-full"></span>
-                            <span class="text-[10px] font-black uppercase tracking-widest text-blue-600">${m.categoria || 'Artigo'}</span>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-blue-600">${esc(m.categoria || 'Artigo')}</span>
                         </div>
                         
                         <a href="${urlMateria}" class="group">
                             <h3 class="text-2xl font-serif font-bold mb-4 text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">
-                                ${m.titulo}
+                                ${esc(m.titulo)}
                             </h3>
                         </a>
 
                         <p class="text-gray-600 text-sm mb-6 line-clamp-3 leading-relaxed font-light">
-                            ${m.conteudo ? m.conteudo.replace(/<[^>]*>?/gm, '').substring(0, 140) + '...' : 'Confira a íntegra deste pensamento...'}
+                            ${m.resumo ? esc(m.resumo) : 'Confira a íntegra deste pensamento...'}
                         </p>
                         
                         <div class="mt-auto pt-6 border-t border-gray-50">
