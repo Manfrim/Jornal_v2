@@ -35,6 +35,43 @@
         </div>
     </div>
 </div>
+
+<!-- CARROSSEL DE LOGOS DAS EMPRESAS -->
+@if(isset($companies) && $companies->count() > 0)
+<section class="py-12 bg-white border-y border-gray-100 overflow-hidden">
+    <div class="container mx-auto px-4 mb-6 text-center">
+        <p class="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">Parceiros & Empresas</p>
+    </div>
+
+    <!-- Container com efeito de fade nas bordas -->
+    <div class="relative w-full flex overflow-x-hidden mask-gradient">
+        <!-- Track que desliza infinitamente -->
+        <div class="flex gap-12 items-center whitespace-nowrap animate-marquee">
+            @foreach($companies as $company)
+                <div class="flex-shrink-0 w-36 h-20 bg-slate-50 border border-gray-100 rounded-2xl p-4 flex items-center justify-center grayscale hover:grayscale-0 opacity-70 hover:opacity-100 transition-all duration-300">
+                    <img src="{{ asset('storage/' . $company->logo_path) }}" 
+                         alt="{{ $company->name }}" 
+                         title="{{ $company->name }}"
+                         class="max-h-full max-w-full object-contain">
+                </div>
+            @endforeach
+        </div>
+
+        <!-- Duplicação do loop para criar a ilusão de loop infinito sem quebras -->
+        <div class="flex gap-12 items-center whitespace-nowrap animate-marquee" aria-hidden="true">
+            @foreach($companies as $company)
+                <div class="flex-shrink-0 w-36 h-20 bg-slate-50 border border-gray-100 rounded-2xl p-4 flex items-center justify-center grayscale hover:grayscale-0 opacity-70 hover:opacity-100 transition-all duration-300">
+                    <img src="{{ asset('storage/' . $company->logo_path) }}" 
+                         alt="{{ $company->name }}" 
+                         title="{{ $company->name }}"
+                         class="max-h-full max-w-full object-contain">
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 <section class="bg-slate-50 py-20 border-t border-gray-100">
     <div class="container mx-auto px-4">
         <div class="max-w-4xl mx-auto bg-slate-900 rounded-[3rem] p-10 md:p-16 shadow-2xl relative overflow-hidden group">
@@ -46,11 +83,8 @@
                 </div>
                 
                 <div id="pensamento-container" class="flex flex-col items-center justify-center min-h-[140px] w-full text-center px-4">
-                    <p id="texto-pensamento" class="text-xl md:text-3xl font-serif italic text-slate-100 leading-relaxed drop-shadow-md">
-                        <span class="opacity-20 animate-pulse font-sans text-lg tracking-widest">Aguardando inspiração...</span>
-                    </p>
-                    <p id="autor-pensamento" class="mt-8 text-xs font-black uppercase tracking-[0.5em] text-blue-400 opacity-0 transition-opacity duration-1000 italic">
-                    </p>
+                    <p id="texto-pensamento" class="text-xl md:text-3xl font-serif italic text-slate-100 leading-relaxed drop-shadow-md min-h-[3rem] whitespace-pre-wrap"></p>
+                    <p id="autor-pensamento" class="mt-8 text-xs font-black uppercase tracking-[0.5em] text-blue-400 opacity-0 transition-opacity duration-1000 italic min-h-[1.5rem]"></p>
                 </div>
 
                 <div class="mt-12 pt-8 border-t border-slate-800 w-full flex justify-center">
@@ -66,47 +100,67 @@
 </section>
 
 <script>
-// --- LÓGICA DO PENSAMENTO ---
+// --- LÓGICA DO PENSAMENTO (PREVENÇÃO DE ENCAVALAMENTO E FORMATAÇÃO DE ESPAÇOS) ---
+let currentExecutionId = 0;
+
 async function buscarNovoPensamento() {
+    currentExecutionId++;
+    const myExecutionId = currentExecutionId;
+
     const textoEl = document.getElementById('texto-pensamento');
     const autorEl = document.getElementById('autor-pensamento');
     const icon = document.getElementById('btn-refresh-icon');
 
     if (icon) icon.classList.add('animate-spin');
-    
+
+    // Limpa os campos usando textContent
+    if (textoEl) textoEl.textContent = "Aguardando inspiração...";
+    if (autorEl) {
+        autorEl.classList.add('opacity-0');
+        autorEl.textContent = "";
+    }
+
     try {
         const response = await fetch("https://raw.githubusercontent.com/devmatheusguerra/frasesJSON/master/frases.json");
         const data = await response.json();
+        
+        if (myExecutionId !== currentExecutionId) return;
+
         const sorteada = data[Math.floor(Math.random() * data.length)];
-        exibirComEfeito(sorteada.frase, sorteada.autor);
+        exibirComEfeito(sorteada.frase, sorteada.autor, myExecutionId);
     } catch (err) {
-        textoEl.innerText = "A sabedoria consiste em saber que nada se sabe.";
-        autorEl.innerText = "— Sócrates";
-        autorEl.classList.remove('opacity-0');
+        if (myExecutionId !== currentExecutionId) return;
+        exibirComEfeito("A sabedoria consiste em saber que nada se sabe.", "Sócrates", myExecutionId);
     } finally {
         if (icon) icon.classList.remove('animate-spin');
     }
 }
 
-function exibirComEfeito(texto, autor) {
+function exibirComEfeito(texto, autor, executionId) {
     const textoEl = document.getElementById('texto-pensamento');
     const autorEl = document.getElementById('autor-pensamento');
     if (!textoEl || !autorEl) return;
 
-    autorEl.classList.add('opacity-0');
-    textoEl.innerText = "";
+    // Normaliza quebras de linha e múltiplos espaços do JSON para espaços únicos
+    const textoFormatado = texto.replace(/\s+/g, ' ').trim();
+
+    textoEl.textContent = "";
     let i = 0;
-    
+
     function digitar() {
-        if (i < texto.length) {
-            textoEl.innerHTML += texto.charAt(i);
+        if (executionId !== currentExecutionId) return;
+
+        if (i < textoFormatado.length) {
+            textoEl.textContent += textoFormatado.charAt(i);
             i++;
             setTimeout(digitar, 30);
         } else {
-            autorEl.innerText = `— ${autor}`;
-            autorEl.classList.replace('opacity-0', 'opacity-100');
+            autorEl.textContent = `— ${autor}`;
+            autorEl.classList.remove('opacity-0');
+            autorEl.classList.add('opacity-100');
         }
     }
+
     digitar();
 }
 
@@ -123,8 +177,6 @@ function carregarMaterias() {
             }
 
             container.innerHTML = data.map((m, index) => {
-                // Criamos a URL de forma segura. 
-                // Se você usa slugs, o caminho abaixo é o padrão:
                 const urlMateria = `{{ url('/materia') }}/${m.slug}`;
 
                 return `
@@ -174,13 +226,37 @@ function carregarMaterias() {
 // INICIALIZAÇÃO
 window.addEventListener('load', () => {
     carregarMaterias();
-    // Inicia o pensamento um pouco depois das matérias para não sobrecarregar
-    setTimeout(buscarNovoPensamento, 1500);
+    setTimeout(buscarNovoPensamento, 1000);
 });
 </script>
 
 <style>
-    /* Animações Customizadas via CSS (integradas com Tailwind) */
+    #texto-pensamento {
+        white-space: pre-wrap;
+    }
+
+    /* Animação Marquee do Carrossel de Logos */
+    @keyframes marquee {
+        0% { transform: translateX(0%); }
+        100% { transform: translateX(-100%); }
+    }
+
+    .animate-marquee {
+        display: flex;
+        animation: marquee 25s linear infinite;
+    }
+
+    .animate-marquee:hover {
+        animation-play-state: paused;
+    }
+
+    /* Suavização lateral do carrossel */
+    .mask-gradient {
+        mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    }
+
+    /* Animações Customizadas via CSS */
     @keyframes fadeInUp {
         from { opacity: 0; transform: translateY(30px); }
         to { opacity: 1; transform: translateY(0); }

@@ -7,6 +7,8 @@ use App\Http\Controllers\Writers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\MateriaController;
+use App\Http\Controllers\CompanyController;
+
 
 
 // Auth padrão do Laravel
@@ -73,4 +75,11 @@ Route::middleware(['auth:escritor', 'is.writer'])->group(function () {
     Route::put('/painel/perfil/update', [Writers::class, 'updateProfile'])->name('panel.profile.update');
 
     Route::get('/painel/artigos/preview/{id}', [Writers::class, 'preview'])->name('panel.articles.preview');
+
+
+    Route::get('/painel/empresas', [CompanyController::class, 'index'])->name('panel.companies.index');
+    Route::post('/painel/empresas/store', [CompanyController::class, 'store'])->name('panel.companies.store');
+    Route::delete('/painel/empresas/{id}', [CompanyController::class, 'destroy'])->name('panel.companies.destroy');
 });
+
+
